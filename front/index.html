@@ -27,17 +27,25 @@
             <a href="./addProduct.html" class="nav-link">Add Product</a>
           </li>
         </ul>
-        <form class="d-flex">
-          <input class="form-control me-2" type="text" placeholder="Search" />
-          <button class="btn btn-info" type="button">Search</button>
-        </form>
       </div>
     </nav>
-
+    <div class="container w-25 mt-3">
+      <form class="d-flex" id="searchProductForm">
+        <input
+          class="form-control me-2"
+          type="text"
+          placeholder="Search for Product"
+          id="searchProductQuery"
+        />
+        <button class="btn btn-info" type="submit" id="searchProductBtn">
+          Search
+        </button>
+      </form>
+    </div>
     <div
       class="container mt-3 d-flex justify-content-between align-items-center gap-5"
     >
-      <div class="w-50">
+      <div class="w-50 align-self-start">
         <h2>Product List:</h2>
         <ul class="list-group" id="product-list"></ul>
       </div>
@@ -77,4 +85,23 @@
   };
   window.onload = fetchProducts();
   window.onload = fetchCategories();
+  const searchProduct = async (event) => {
+    event.preventDefault();
+    const searchQuery = document.getElementById('searchProductQuery').value;
+    const response = await axios.get(
+      `http://127.0.0.1:8000/products/?search=${searchQuery}`
+    );
+    const products = response.data;
+    productList.innerHTML = '';
+    products.forEach((product) => {
+      const productItem = document.createElement('a');
+      productItem.className = 'list-group-item list-group-item-action';
+      productItem.href = `singleProduct.html?product=${product.id}`;
+      productItem.innerHTML = `<p><strong>${product.name}</strong>: ${product.description}<br> Price: ${product.price}$ </p>`;
+      productList.appendChild(productItem);
+    });
+  };
+  document
+    .getElementById('searchProductForm')
+    .addEventListener('submit', searchProduct);
 </script>

@@ -9,8 +9,14 @@ from django.shortcuts import get_object_or_404
 @api_view(["GET", "POST"])
 def products_list(request):
     if request.method == "GET":
-        all_products = ProductSerializer(Product.objects.all(), many=True).data
-        return Response(all_products)
+        search_query = request.GET.get("search", None)
+        if search_query:
+            products = Product.objects.filter(name__istartswith=search_query)
+            serializer = ProductSerializer(products, many=True).data
+            return Response(serializer)
+        else:
+            all_products = ProductSerializer(Product.objects.all(), many=True).data
+            return Response(all_products)
     elif request.method == "POST":
         serializer = ProductSerializer(data=request.data)
         if serializer.is_valid():
