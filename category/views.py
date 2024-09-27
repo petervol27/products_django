@@ -14,5 +14,6 @@ def categories_list(request):
 
 
 @api_view(["GET", "PUT", "DELETE"])
-def category_details(request):
-    return Response("mamama")
+def category_details(request, id):
+    category = get_object_or_404(Category, id=id)
+    return Response(CategorySerializer(category).data)
